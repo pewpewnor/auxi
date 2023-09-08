@@ -1,4 +1,4 @@
-package auxi
+package res
 
 type SuccessResponseData struct {
 	Status  string                 `json:"status"`

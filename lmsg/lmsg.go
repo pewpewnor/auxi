@@ -1,4 +1,4 @@
-package auxi
+package lmsg
 
 import (
 	"fmt"

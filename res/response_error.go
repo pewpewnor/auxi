@@ -1,4 +1,4 @@
-package auxi
+package res
 
 import (
 	"strconv"
