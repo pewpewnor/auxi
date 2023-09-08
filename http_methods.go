@@ -43,5 +43,6 @@ func (mux *ServeMux) HandleMethods(pattern string, methodHandlers MethodHandlers
 				http.Error(w, "Method not supported",
 					http.StatusMethodNotAllowed)
 			}
-		}))
+		}),
+	)
 }
