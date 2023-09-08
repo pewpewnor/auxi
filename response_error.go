@@ -18,16 +18,16 @@ func (e ErrorResponseData) Error() string {
 	return e.ErrorData.Message
 }
 
+type ErrorResponseValidation struct {
+	Field   string `json:"field"`
+	Message string `json:"message"`
+}
+
 type errorResponseContent struct {
 	Code             string                    `json:"code"`
 	Message          string                    `json:"message"`
 	Details          string                    `json:"details"`
 	ValidationErrors []ErrorResponseValidation `json:"validationErrors"`
-}
-
-type ErrorResponseValidation struct {
-	Field   string `json:"field"`
-	Message string `json:"message"`
 }
 
 func SimpleErrorResponse(message string, details string) ErrorResponseData {

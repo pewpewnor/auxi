@@ -23,6 +23,10 @@ const (
 	infoPrefix    = "[INFO]"
 )
 
+func format(color func(...any) string, prefix string, message string) string {
+	return color(prefix + " " + fmt.Sprint(message))
+}
+
 func Warn(v ...any) string {
 	return format(yellow, warningPrefix, fmt.Sprint(v...))
 }
@@ -53,8 +57,4 @@ func Info(v ...any) string {
 
 func Infof(s string, v ...any) string {
 	return format(blue, infoPrefix, fmt.Sprintf(s, v...))
-}
-
-func format(color func(...any) string, prefix string, message string) string {
-	return color(prefix + " " + fmt.Sprint(message))
 }
