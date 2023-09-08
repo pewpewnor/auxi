@@ -9,7 +9,9 @@ type ErrorResponseData struct {
 }
 
 func (e *ErrorResponseData) AddValidation(validation ErrorResponseValidation) {
-	e.ErrorData.ValidationErrors = append(e.ErrorData.ValidationErrors, validation)
+	e.ErrorData.ValidationErrors = append(e.ErrorData.ValidationErrors,
+		validation,
+	)
 }
 
 func (e ErrorResponseData) Error() string {
