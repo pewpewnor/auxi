@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"os"
 
 	"github.com/fatih/color"
 )
@@ -34,6 +35,11 @@ type Logger struct {
 	flag int
 }
 
+var logger = &Logger{
+	log.New(os.Stdout, "[APP] ", 0),
+	0,
+}
+
 func New(out io.Writer, prefix string, flag int) *Logger {
 	return &Logger{
 		log.New(out, prefix, flag),
@@ -41,52 +47,52 @@ func New(out io.Writer, prefix string, flag int) *Logger {
 	}
 }
 
-func (l *Logger) AddTimestampFlag(flag int) {
-	l.flag |= log.LstdFlags
-	l.SetFlags(l.flag)
+func AddTimestampFlag(flag int) {
+	logger.flag |= log.LstdFlags
+	logger.SetFlags(logger.flag)
 }
 
-func (l *Logger) AddLineOfCodeFlag(flag int) {
-	l.flag |= log.Llongfile
-	l.SetFlags(l.flag)
+func AddLineOfCodeFlag(flag int) {
+	logger.flag |= log.Llongfile
+	logger.SetFlags(logger.flag)
 }
 
-func (l *Logger) Fatal(v ...any) {
-	l.Fatalln(format(red, errorPrefix, fmt.Sprint(v...)))
+func Fatal(v ...any) {
+	logger.Fatalln(format(red, errorPrefix, fmt.Sprint(v...)))
 }
 
-func (l *Logger) Fatalf(s string, v ...any) {
-	l.Fatalf(format(red, errorPrefix, fmt.Sprintf(s, v...)))
+func Fatalf(s string, v ...any) {
+	logger.Fatalf(format(red, errorPrefix, fmt.Sprintf(s, v...)))
 }
 
-func (l *Logger) Warn(v ...any) {
-	l.Println(format(yellow, warningPrefix, fmt.Sprint(v...)))
+func Warn(v ...any) {
+	logger.Println(format(yellow, warningPrefix, fmt.Sprint(v...)))
 }
 
-func (l *Logger) Warnf(s string, v ...any) {
-	l.Println(format(yellow, warningPrefix, fmt.Sprintf(s, v...)))
+func Warnf(s string, v ...any) {
+	logger.Println(format(yellow, warningPrefix, fmt.Sprintf(s, v...)))
 }
 
-func (l *Logger) Error(v ...any) {
-	l.Println(format(red, errorPrefix, fmt.Sprint(v...)))
+func Error(v ...any) {
+	logger.Println(format(red, errorPrefix, fmt.Sprint(v...)))
 }
 
-func (l *Logger) Errorf(s string, v ...any) {
-	l.Println(format(red, errorPrefix, fmt.Sprintf(s, v...)))
+func Errorf(s string, v ...any) {
+	logger.Println(format(red, errorPrefix, fmt.Sprintf(s, v...)))
 }
 
-func (l *Logger) Success(v ...any) {
-	l.Println(format(green, successPrefix, fmt.Sprint(v...)))
+func Success(v ...any) {
+	logger.Println(format(green, successPrefix, fmt.Sprint(v...)))
 }
 
-func (l *Logger) Successf(s string, v ...any) {
-	l.Println(format(green, successPrefix, fmt.Sprintf(s, v...)))
+func Successf(s string, v ...any) {
+	logger.Println(format(green, successPrefix, fmt.Sprintf(s, v...)))
 }
 
-func (l *Logger) Info(v ...any) {
-	l.Println(format(blue, infoPrefix, fmt.Sprint(v...)))
+func Info(v ...any) {
+	logger.Println(format(blue, infoPrefix, fmt.Sprint(v...)))
 }
 
-func (l *Logger) Infof(s string, v ...any) {
-	l.Println(format(blue, infoPrefix, fmt.Sprintf(s, v...)))
+func Infof(s string, v ...any) {
+	logger.Println(format(blue, infoPrefix, fmt.Sprintf(s, v...)))
 }
