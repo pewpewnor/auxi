@@ -2,6 +2,8 @@ package auxi
 
 import "net/http"
 
+type Middleware func(next http.HandlerFunc) http.HandlerFunc
+
 type MethodHandlers struct {
 	GET     func(http.ResponseWriter, *http.Request)
 	POST    func(http.ResponseWriter, *http.Request)
@@ -10,6 +12,30 @@ type MethodHandlers struct {
 	PATCH   func(http.ResponseWriter, *http.Request)
 	HEAD    func(http.ResponseWriter, *http.Request)
 	OPTIONS func(http.ResponseWriter, *http.Request)
+}
+
+type MiddlewareChain struct {
+	middlewares []Middleware
+}
+
+func (mc *MiddlewareChain) AddMiddleware(middleware Middleware) {
+	mc.middlewares = append(mc.middlewares, middleware)
+}
+
+func (mc *MiddlewareChain) Apply(handler http.HandlerFunc) http.HandlerFunc {
+	resultHandler := handler
+
+	for _, middleware := range mc.middlewares {
+		resultHandler = middleware(resultHandler)
+	}
+
+	return resultHandler
+}
+
+func (mc *MiddlewareChain) ApplyToChain(chain MiddlewareChain) *MiddlewareChain {
+	return &MiddlewareChain{
+		middlewares: append(mc.middlewares, chain.middlewares...),
+	}
 }
 
 type ServeMux struct {
@@ -39,6 +65,12 @@ func (mux *ServeMux) HandleMethods(pattern string, methodHandlers MethodHandlers
 					http.StatusMethodNotAllowed)
 			}
 		}))
+}
+
+func NewMiddlewareChain(middlewares ...Middleware) *MiddlewareChain {
+	return &MiddlewareChain{
+		middlewares: middlewares,
+	}
 }
 
 func NewServeMux() *ServeMux {
