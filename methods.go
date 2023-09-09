@@ -1,6 +1,8 @@
 package auxi
 
-import "net/http"
+import (
+	"net/http"
+)
 
 type MethodHandlers struct {
 	GET     func(http.ResponseWriter, *http.Request)
