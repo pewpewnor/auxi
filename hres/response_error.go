@@ -4,20 +4,6 @@ import (
 	"strconv"
 )
 
-type ErrorResponseData struct {
-	ErrorData errorResponseContent `json:"error"`
-}
-
-func (e ErrorResponseData) Error() string {
-	return e.ErrorData.Message
-}
-
-func (e *ErrorResponseData) AddValidation(validation ErrorResponseValidation) {
-	e.ErrorData.ValidationErrors = append(e.ErrorData.ValidationErrors,
-		validation,
-	)
-}
-
 type ErrorResponseValidation struct {
 	Field   string `json:"field"`
 	Message string `json:"message"`
@@ -30,11 +16,23 @@ type errorResponseContent struct {
 	ValidationErrors []ErrorResponseValidation `json:"validationErrors"`
 }
 
-func SimpleError(message string, details string) ErrorResponseData {
+type ErrorResponseData struct {
+	ErrorData errorResponseContent `json:"error"`
+}
+
+func (e ErrorResponseData) Error() string {
+	return e.ErrorData.Message
+}
+
+func (e *ErrorResponseData) AddValidation(validation ErrorResponseValidation) {
+	e.ErrorData.ValidationErrors = append(
+		e.ErrorData.ValidationErrors, validation)
+}
+
+func SimpleError(message string) ErrorResponseData {
 	return ErrorResponseData{
 		ErrorData: errorResponseContent{
 			Message: message,
-			Details: details,
 		},
 	}
 }
