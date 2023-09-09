@@ -14,9 +14,11 @@ func RespondWithJSON(w http.ResponseWriter, data any, httpStatusCode int) {
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 
-		defer panic(fmt.Sprintf("Could not marshal response %v to JSON: %v", response, err))
+		defer panic(fmt.Sprintf(
+			"Could not marshal response %v to JSON: %v", response, err))
 
-		errorResponse, err := json.Marshal(SimpleErrorFromErr("Could not marshal response to JSON", err))
+		errorResponse, err := json.Marshal(SimpleErrorFromErr(
+			"Could not marshal response to JSON", err))
 		if err != nil {
 			w.Write([]byte("Could not marshal response to JSON"))
 		}
