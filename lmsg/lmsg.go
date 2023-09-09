@@ -2,6 +2,8 @@ package lmsg
 
 import (
 	"fmt"
+	"io"
+	"log"
 
 	"github.com/fatih/color"
 )
@@ -27,34 +29,64 @@ func format(color func(...any) string, prefix string, message string) string {
 	return color(prefix + " " + fmt.Sprint(message))
 }
 
-func Warn(v ...any) string {
-	return format(yellow, warningPrefix, fmt.Sprint(v...))
+type Logger struct {
+	*log.Logger
+	flag int
 }
 
-func Warnf(s string, v ...any) string {
-	return format(yellow, warningPrefix, fmt.Sprintf(s, v...))
+func New(out io.Writer, prefix string, flag int) *Logger {
+	return &Logger{
+		log.New(out, prefix, flag),
+		flag,
+	}
 }
 
-func Error(v ...any) string {
-	return format(red, errorPrefix, fmt.Sprint(v...))
+func (l *Logger) AddTimestampFlag(flag int) {
+	l.flag |= log.LstdFlags
+	l.SetFlags(l.flag)
 }
 
-func Errorf(s string, v ...any) string {
-	return format(red, errorPrefix, fmt.Sprintf(s, v...))
+func (l *Logger) AddLineOfCodeFlag(flag int) {
+	l.flag |= log.Llongfile
+	l.SetFlags(l.flag)
 }
 
-func Success(v ...any) string {
-	return format(green, successPrefix, fmt.Sprint(v...))
+func (l *Logger) Fatal(v ...any) {
+	l.Fatalln(format(red, errorPrefix, fmt.Sprint(v...)))
 }
 
-func Successf(s string, v ...any) string {
-	return format(green, successPrefix, fmt.Sprintf(s, v...))
+func (l *Logger) Fatalf(s string, v ...any) {
+	l.Fatalf(format(red, errorPrefix, fmt.Sprintf(s, v...)))
 }
 
-func Info(v ...any) string {
-	return format(blue, infoPrefix, fmt.Sprint(v...))
+func (l *Logger) Warn(v ...any) {
+	l.Println(format(yellow, warningPrefix, fmt.Sprint(v...)))
 }
 
-func Infof(s string, v ...any) string {
-	return format(blue, infoPrefix, fmt.Sprintf(s, v...))
+func (l *Logger) Warnf(s string, v ...any) {
+	l.Println(format(yellow, warningPrefix, fmt.Sprintf(s, v...)))
+}
+
+func (l *Logger) Error(v ...any) {
+	l.Println(format(red, errorPrefix, fmt.Sprint(v...)))
+}
+
+func (l *Logger) Errorf(s string, v ...any) {
+	l.Println(format(red, errorPrefix, fmt.Sprintf(s, v...)))
+}
+
+func (l *Logger) Success(v ...any) {
+	l.Println(format(green, successPrefix, fmt.Sprint(v...)))
+}
+
+func (l *Logger) Successf(s string, v ...any) {
+	l.Println(format(green, successPrefix, fmt.Sprintf(s, v...)))
+}
+
+func (l *Logger) Info(v ...any) {
+	l.Println(format(blue, infoPrefix, fmt.Sprint(v...)))
+}
+
+func (l *Logger) Infof(s string, v ...any) {
+	l.Println(format(blue, infoPrefix, fmt.Sprintf(s, v...)))
 }
