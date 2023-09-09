@@ -35,9 +35,9 @@ func (e *ErrorResponseData) AddValidation(validation errorResponseValidation) {
 }
 
 type SuccessResponseData struct {
-	Status  string                 `json:"status"`
-	Data    map[string]interface{} `json:"data"`
-	Message string                 `json:"message"`
+	Status  string         `json:"status"`
+	Data    map[string]any `json:"data"`
+	Message string         `json:"message"`
 }
 
 type respond struct{}
@@ -84,7 +84,7 @@ func (rc respond) SimpleSuccess(message string) SuccessResponseData {
 	}
 }
 
-func (rc respond) Success(data map[string]interface{}, message string) SuccessResponseData {
+func (rc respond) Success(data map[string]any, message string) SuccessResponseData {
 	return SuccessResponseData{
 		Status:  "success",
 		Message: message,
