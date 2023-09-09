@@ -6,10 +6,18 @@ import (
 	"strings"
 )
 
-type AuthorizationHeader struct{}
+type authorizationHeader struct {
+	r *http.Request
+}
 
-func (ah AuthorizationHeader) GetBearerToken(r *http.Request, tokenPrefix string) (string, error) {
-	value := r.Header.Get("Authorization")
+func NewAuthorizationHeader(r *http.Request) authorizationHeader {
+	return authorizationHeader{
+		r: r,
+	}
+}
+
+func (ah authorizationHeader) GetBearerToken(tokenPrefix string) (string, error) {
+	value := ah.r.Header.Get("Authorization")
 	if value == "" {
 		err := Respond.SimpleError("No authorization header or value given")
 		return "", err
