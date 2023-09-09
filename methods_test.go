@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"strconv"
 	"testing"
 
@@ -18,12 +19,16 @@ type testPerson struct {
 }
 
 var expectedTestPerson = testPerson{
-	Name: "TestName",
+	Name: "Test Name",
 	Age:  69,
 }
 
 func testGetHandler(server *httptest.Server, t *testing.T) {
-	resp, err := http.Get(server.URL + "/test" + fmt.Sprintf("?name=%v&age=%v", expectedTestPerson.Name, expectedTestPerson.Age))
+	params := url.Values{}
+	params.Add("name", expectedTestPerson.Name)
+	params.Add("age", strconv.Itoa(expectedTestPerson.Age))
+
+	resp, err := http.Get(fmt.Sprintf("%v/test?%v", server.URL, params.Encode()))
 	if err != nil {
 		t.Fatalf("Failed to make GET request: %v", err)
 	}
