@@ -1,4 +1,4 @@
-package res
+package hres
 
 type SuccessResponseData struct {
 	Status  string                 `json:"status"`
