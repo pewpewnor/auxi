@@ -13,22 +13,21 @@ import (
 	"github.com/pewpewnor/auxi/res"
 )
 
+var testServer *httptest.Server
+
 type testPerson struct {
 	Name string `json:"name"`
 	Age  int    `json:"age"`
 }
 
-var expectedTestPerson = testPerson{
-	Name: "Test Name",
-	Age:  69,
-}
+var expectedTestPerson testPerson
 
-func testGetHandler(server *httptest.Server, t *testing.T) {
+func TestGetHandler(t *testing.T) {
 	params := url.Values{}
 	params.Add("name", expectedTestPerson.Name)
 	params.Add("age", strconv.Itoa(expectedTestPerson.Age))
 
-	resp, err := http.Get(fmt.Sprintf("%v/test?%v", server.URL, params.Encode()))
+	resp, err := http.Get(fmt.Sprintf("%v/test?%v", testServer.URL, params.Encode()))
 	if err != nil {
 		t.Fatalf("Failed to make GET request: %v", err)
 	}
@@ -48,13 +47,13 @@ func testGetHandler(server *httptest.Server, t *testing.T) {
 	}
 }
 
-func testPostHandler(server *httptest.Server, t *testing.T) {
+func TestPostHandler(t *testing.T) {
 	requestBody, err := json.Marshal(expectedTestPerson)
 	if err != nil {
 		t.Fatalf("Failed to encode person to JSON: %v", err)
 	}
 
-	resp, err := http.Post(server.URL+"/test", "application/json", bytes.NewReader(requestBody))
+	resp, err := http.Post(testServer.URL+"/test", "application/json", bytes.NewReader(requestBody))
 	if err != nil {
 		t.Fatalf("Failed to make POST request: %v", err)
 	}
@@ -74,8 +73,13 @@ func testPostHandler(server *httptest.Server, t *testing.T) {
 	}
 }
 
-func TestHandleMethods(t *testing.T) {
+func TestMain(m *testing.M) {
 	mux := NewServeMux()
+
+	expectedTestPerson = testPerson{
+		Name: "Test Name",
+		Age:  69,
+	}
 
 	mux.HandleMethods("/test", MethodHandlers{
 		GET: func(w http.ResponseWriter, r *http.Request) {
@@ -109,9 +113,8 @@ func TestHandleMethods(t *testing.T) {
 		},
 	})
 
-	server := httptest.NewServer(mux)
-	defer server.Close()
+	testServer = httptest.NewServer(mux)
+	defer testServer.Close()
 
-	testGetHandler(server, t)
-	testPostHandler(server, t)
+	m.Run()
 }
