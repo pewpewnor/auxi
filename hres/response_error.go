@@ -8,14 +8,14 @@ type ErrorResponseData struct {
 	ErrorData errorResponseContent `json:"error"`
 }
 
+func (e ErrorResponseData) Error() string {
+	return e.ErrorData.Message
+}
+
 func (e *ErrorResponseData) AddValidation(validation ErrorResponseValidation) {
 	e.ErrorData.ValidationErrors = append(e.ErrorData.ValidationErrors,
 		validation,
 	)
-}
-
-func (e ErrorResponseData) Error() string {
-	return e.ErrorData.Message
 }
 
 type ErrorResponseValidation struct {
@@ -30,7 +30,7 @@ type errorResponseContent struct {
 	ValidationErrors []ErrorResponseValidation `json:"validationErrors"`
 }
 
-func SimpleErrorResponse(message string, details string) ErrorResponseData {
+func SimpleError(message string, details string) ErrorResponseData {
 	return ErrorResponseData{
 		ErrorData: errorResponseContent{
 			Message: message,
@@ -39,7 +39,7 @@ func SimpleErrorResponse(message string, details string) ErrorResponseData {
 	}
 }
 
-func SimpleErrorResponseFromError(message string, err error) ErrorResponseData {
+func SimpleErrorFromErr(message string, err error) ErrorResponseData {
 	return ErrorResponseData{
 		ErrorData: errorResponseContent{
 			Message: message,
@@ -48,7 +48,7 @@ func SimpleErrorResponseFromError(message string, err error) ErrorResponseData {
 	}
 }
 
-func ErrorResponse(code int, message string, details string, validationErrors []ErrorResponseValidation) ErrorResponseData {
+func ValidationError(code int, message string, details string, validationErrors []ErrorResponseValidation) ErrorResponseData {
 	return ErrorResponseData{
 		ErrorData: errorResponseContent{
 			strconv.Itoa(code),

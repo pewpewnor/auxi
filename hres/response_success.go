@@ -6,14 +6,14 @@ type SuccessResponseData struct {
 	Message string                 `json:"message"`
 }
 
-func SimpleSuccessResponse(message string) SuccessResponseData {
+func SimpleSuccess(message string) SuccessResponseData {
 	return SuccessResponseData{
 		Status:  "success",
 		Message: message,
 	}
 }
 
-func SuccessResponse(data map[string]interface{}, message string) SuccessResponseData {
+func Success(data map[string]interface{}, message string) SuccessResponseData {
 	return SuccessResponseData{
 		Status:  "success",
 		Message: message,
