@@ -9,6 +9,12 @@ import (
 
 var Respond respond
 
+type SuccessResponseData struct {
+	Status  string         `json:"status"`
+	Data    map[string]any `json:"data"`
+	Message string         `json:"message"`
+}
+
 type errorResponseValidation struct {
 	Field   string `json:"field"`
 	Message string `json:"message"`
@@ -32,12 +38,6 @@ func (e ErrorResponseData) Error() string {
 func (e *ErrorResponseData) AddValidation(validation errorResponseValidation) {
 	e.ErrorData.ValidationErrors = append(
 		e.ErrorData.ValidationErrors, validation)
-}
-
-type SuccessResponseData struct {
-	Status  string         `json:"status"`
-	Data    map[string]any `json:"data"`
-	Message string         `json:"message"`
 }
 
 type respond struct{}
