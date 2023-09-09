@@ -10,7 +10,7 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/pewpewnor/auxi/res"
+	"github.com/pewpewnor/auxi/hres"
 )
 
 var testServer *httptest.Server
@@ -98,7 +98,7 @@ func TestMain(m *testing.M) {
 			}
 			params.Age = age
 
-			res.RespondWithJSON(w, params, http.StatusOK)
+			hres.RespondWithJSON(w, params, http.StatusOK)
 		},
 		POST: func(w http.ResponseWriter, r *http.Request) {
 			var person testPerson
@@ -109,7 +109,7 @@ func TestMain(m *testing.M) {
 				return
 			}
 
-			res.RespondWithJSON(w, person, http.StatusOK)
+			hres.RespondWithJSON(w, person, http.StatusOK)
 		},
 	})
 
