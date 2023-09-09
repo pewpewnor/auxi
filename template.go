@@ -6,8 +6,6 @@ import (
 	"strings"
 )
 
-type Middleware func(next http.HandlerFunc) http.HandlerFunc
-
 type authorizationHeader struct {
 	r *http.Request
 }
