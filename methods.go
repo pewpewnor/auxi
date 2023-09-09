@@ -14,15 +14,6 @@ type MethodHandlers struct {
 	OPTIONS func(http.ResponseWriter, *http.Request)
 }
 
-func callMethodHandler(w http.ResponseWriter, r *http.Request, handler func(http.ResponseWriter, *http.Request)) {
-	if handler == nil {
-		http.NotFound(w, r)
-		return
-	}
-
-	handler(w, r)
-}
-
 func (mux *ServeMux) HandleMethods(pattern string, methodHandlers MethodHandlers) {
 	mux.HandleFunc(pattern, http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
@@ -45,6 +36,14 @@ func (mux *ServeMux) HandleMethods(pattern string, methodHandlers MethodHandlers
 				http.Error(w, "Method not supported",
 					http.StatusMethodNotAllowed)
 			}
-		}),
-	)
+		}))
+}
+
+func callMethodHandler(w http.ResponseWriter, r *http.Request, handler func(http.ResponseWriter, *http.Request)) {
+	if handler == nil {
+		http.NotFound(w, r)
+		return
+	}
+
+	handler(w, r)
 }

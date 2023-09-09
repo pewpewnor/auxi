@@ -9,10 +9,17 @@ import (
 
 var Respond respond
 
-type SuccessResponseData struct {
-	Status  string         `json:"status"`
-	Data    map[string]any `json:"data"`
-	Message string         `json:"message"`
+type ErrorResponseData struct {
+	ErrorData errorResponseContent `json:"error"`
+}
+
+func (e ErrorResponseData) Error() string {
+	return e.ErrorData.Message
+}
+
+func (e *ErrorResponseData) AddValidation(validation errorResponseValidation) {
+	e.ErrorData.ValidationErrors = append(e.ErrorData.ValidationErrors,
+		validation)
 }
 
 type errorResponseValidation struct {
@@ -27,20 +34,38 @@ type errorResponseContent struct {
 	ValidationErrors []errorResponseValidation `json:"validationErrors"`
 }
 
-type ErrorResponseData struct {
-	ErrorData errorResponseContent `json:"error"`
-}
-
-func (e ErrorResponseData) Error() string {
-	return e.ErrorData.Message
-}
-
-func (e *ErrorResponseData) AddValidation(validation errorResponseValidation) {
-	e.ErrorData.ValidationErrors = append(
-		e.ErrorData.ValidationErrors, validation)
+type SuccessResponseData struct {
+	Status  string         `json:"status"`
+	Data    map[string]any `json:"data"`
+	Message string         `json:"message"`
 }
 
 type respond struct{}
+
+func (rc respond) RespondWithJSON(w http.ResponseWriter, data any, httpStatusCode int) {
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("X-Content-Type-Options", "nosniff")
+
+	response, err := json.Marshal(data)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+
+		defer panic(fmt.Sprintf(
+			"Could not marshal response %v to JSON: %v", response, err))
+
+		errorResponse, err := json.Marshal(rc.SimpleErrorFromErr(
+			"Could not marshal response to JSON", err))
+		if err != nil {
+			w.Write([]byte("Could not marshal response to JSON"))
+		}
+
+		w.Write(errorResponse)
+		return
+	}
+
+	w.WriteHeader(httpStatusCode)
+	w.Write(response)
+}
 
 func (rc respond) SimpleError(message string) ErrorResponseData {
 	return ErrorResponseData{
@@ -90,29 +115,4 @@ func (rc respond) Success(data map[string]any, message string) SuccessResponseDa
 		Message: message,
 		Data:    data,
 	}
-}
-
-func (rc respond) RespondWithJSON(w http.ResponseWriter, data any, httpStatusCode int) {
-	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("X-Content-Type-Options", "nosniff")
-
-	response, err := json.Marshal(data)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-
-		defer panic(fmt.Sprintf(
-			"Could not marshal response %v to JSON: %v", response, err))
-
-		errorResponse, err := json.Marshal(rc.SimpleErrorFromErr(
-			"Could not marshal response to JSON", err))
-		if err != nil {
-			w.Write([]byte("Could not marshal response to JSON"))
-		}
-
-		w.Write(errorResponse)
-		return
-	}
-
-	w.WriteHeader(httpStatusCode)
-	w.Write(response)
 }

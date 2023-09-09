@@ -6,14 +6,10 @@ import (
 	"strings"
 )
 
+type Middleware func(next http.HandlerFunc) http.HandlerFunc
+
 type authorizationHeader struct {
 	r *http.Request
-}
-
-func NewAuthorizationHeader(r *http.Request) authorizationHeader {
-	return authorizationHeader{
-		r: r,
-	}
 }
 
 func (ah authorizationHeader) GetBearerToken(tokenPrefix string) (string, error) {
@@ -46,7 +42,11 @@ func (ah authorizationHeader) GetBearerToken(tokenPrefix string) (string, error)
 	return values[1], nil
 }
 
-type Middleware func(next http.HandlerFunc) http.HandlerFunc
+func NewAuthorizationHeader(r *http.Request) authorizationHeader {
+	return authorizationHeader{
+		r: r,
+	}
+}
 
 func NewCORSMiddleware(options map[string]string) Middleware {
 	return func(next http.HandlerFunc) http.HandlerFunc {
