@@ -3,8 +3,6 @@ package auxi
 import (
 	"net/http"
 	"strings"
-
-	"github.com/pewpewnor/auxi/hres"
 )
 
 func CORSMiddleware(next http.HandlerFunc) http.HandlerFunc {
@@ -24,27 +22,27 @@ func CORSMiddleware(next http.HandlerFunc) http.HandlerFunc {
 func GetBearerTokenFromAuthorizationHeader(r *http.Request) (string, error) {
 	value := r.Header.Get("Authorization")
 	if value == "" {
-		err := hres.SimpleError(
+		err := Respond.SimpleError(
 			"No authorization header or its value is not given")
 		return "", err
 	}
 
 	values := strings.Split(value, " ")
 	if len(values) != 2 {
-		err := hres.SimpleError("Authorization header value is malformed")
-		err.AddValidation(hres.ErrorResponseValidation{
-			Field:   "Authorization header",
-			Message: "Expected exactly 2 values",
-		})
+		err := Respond.SimpleError("Authorization header value is malformed")
+		err.AddValidation(Respond.CreateValidation(
+			"Authorization header",
+			"Expected exactly 2 values",
+		))
 
 		return "", err
 	}
 	if values[0] != "bearer" {
-		err := hres.SimpleError("Authorization header value is malformed")
-		err.AddValidation(hres.ErrorResponseValidation{
-			Field:   "Authorization header",
-			Message: "First value must be 'Apikey'",
-		})
+		err := Respond.SimpleError("Authorization header value is malformed")
+		err.AddValidation(Respond.CreateValidation(
+			"Authorization header",
+			"First value must be 'Apikey'",
+		))
 
 		return "", err
 	}
