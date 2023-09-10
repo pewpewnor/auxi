@@ -91,5 +91,5 @@ func (l *logger) Warnf(s string, v ...any) {
 }
 
 func format(color func(...any) string, prefix string, message string) string {
-	return color(prefix + " " + fmt.Sprint(message))
+	return color(fmt.Sprintf("%v %v", prefix, message))
 }
