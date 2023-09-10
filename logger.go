@@ -50,7 +50,7 @@ func (l *logger) AddLineOfCodeFlag(flag int) {
 	l.SetFlags(l.flag)
 }
 
-func (l *logger) Error(v ...any) {
+func (l *logger) Errorln(v ...any) {
 	l.Println(format(red, errorPrefix, fmt.Sprint(v...)))
 }
 
@@ -58,7 +58,7 @@ func (l *logger) Errorf(s string, v ...any) {
 	l.Println(format(red, errorPrefix, fmt.Sprintf(s, v...)))
 }
 
-func (l *logger) Fatal(v ...any) {
+func (l *logger) Fatalln(v ...any) {
 	l.Fatalln(format(red, errorPrefix, fmt.Sprint(v...)))
 }
 
@@ -66,7 +66,7 @@ func (l *logger) Fatalf(s string, v ...any) {
 	l.Fatalln(format(red, errorPrefix, fmt.Sprintf(s, v...)))
 }
 
-func (l *logger) Info(v ...any) {
+func (l *logger) Infoln(v ...any) {
 	l.Println(format(blue, infoPrefix, fmt.Sprint(v...)))
 }
 
@@ -74,7 +74,7 @@ func (l *logger) Infof(s string, v ...any) {
 	l.Println(format(blue, infoPrefix, fmt.Sprintf(s, v...)))
 }
 
-func (l *logger) Success(v ...any) {
+func (l *logger) Successln(v ...any) {
 	l.Println(format(green, successPrefix, fmt.Sprint(v...)))
 }
 
@@ -82,7 +82,7 @@ func (l *logger) Successf(s string, v ...any) {
 	l.Println(format(green, successPrefix, fmt.Sprintf(s, v...)))
 }
 
-func (l *logger) Warn(v ...any) {
+func (l *logger) Warnln(v ...any) {
 	l.Println(format(yellow, warningPrefix, fmt.Sprint(v...)))
 }
 
