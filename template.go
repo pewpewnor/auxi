@@ -10,6 +10,12 @@ type authorizationHeader struct {
 	r *http.Request
 }
 
+func NewAuthorizationHeader(r *http.Request) authorizationHeader {
+	return authorizationHeader{
+		r: r,
+	}
+}
+
 func (ah authorizationHeader) GetBearerToken(tokenPrefix string) (string, error) {
 	value := ah.r.Header.Get("Authorization")
 	if value == "" {
@@ -38,12 +44,6 @@ func (ah authorizationHeader) GetBearerToken(tokenPrefix string) (string, error)
 	}
 
 	return values[1], nil
-}
-
-func NewAuthorizationHeader(r *http.Request) authorizationHeader {
-	return authorizationHeader{
-		r: r,
-	}
 }
 
 func NewCORSMiddleware(options map[string]string) Middleware {
