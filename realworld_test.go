@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -23,8 +24,8 @@ type Person struct {
 }
 
 func TestMain(m *testing.M) {
-	Logger.SetPrefix("[TEST] ")
-	Logger.AddLineOfCodeFlag()
+	log.SetPrefix("[TEST] ")
+	log.SetFlags(log.Llongfile)
 
 	mux := NewServeMux()
 
@@ -34,7 +35,7 @@ func TestMain(m *testing.M) {
 
 			params.Name = r.URL.Query().Get("name")
 			if params.Name == "" {
-				Logger.Errorln("query string missing field 'name'")
+				log.Println(Logmsg.Err("query string missing field 'name'"))
 				Respond.JSON(w,
 					Respond.SError("query string missing field 'name'"),
 					http.StatusBadRequest)
@@ -43,7 +44,7 @@ func TestMain(m *testing.M) {
 
 			params.Age = r.URL.Query().Get("age")
 			if params.Age == "" {
-				Logger.Errorln("query string missing field 'age'")
+				log.Println(Logmsg.Err("query string missing field 'age'"))
 				Respond.JSON(w,
 					Respond.SError("query string missing field 'age'"),
 					http.StatusBadRequest)
@@ -57,7 +58,7 @@ func TestMain(m *testing.M) {
 
 			err := json.NewDecoder(r.Body).Decode(&person)
 			if err != nil {
-				Logger.Errorln(err)
+				log.Println(Logmsg.Err(err))
 				Respond.JSON(w, Respond.SErrorFromErr("body malformed", err),
 					http.StatusBadRequest)
 				return
@@ -68,7 +69,7 @@ func TestMain(m *testing.M) {
 		PUT: func(w http.ResponseWriter, r *http.Request) {
 			apiKey, err := NewAuthorizationHeader(r.Header).GetBearerToken()
 			if err != nil {
-				Logger.Errorln(err)
+				log.Println(Logmsg.Err(err))
 				Respond.JSON(w,
 					Respond.SErrorFromErr("Auth header malformed", err),
 					http.StatusBadRequest)
@@ -81,7 +82,7 @@ func TestMain(m *testing.M) {
 			var person Person
 
 			if err := BindQueryString(r, &person); err != nil {
-				Logger.Errorln(err)
+				log.Println(Logmsg.Err(err))
 				Respond.JSON(w,
 					Respond.SErrorFromErr("Query string malformed", err),
 					http.StatusBadRequest)

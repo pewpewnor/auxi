@@ -29,15 +29,15 @@ type logmsg struct {
 	flag int
 }
 
-func (l *logmsg) Errorln(v ...any) string {
+func (l *logmsg) Err(v ...any) string {
 	return format(red, errorPrefix, fmt.Sprint(v...))
 }
 
-func (l *logmsg) Errorf(s string, v ...any) string {
+func (l *logmsg) Errf(s string, v ...any) string {
 	return format(red, errorPrefix, fmt.Sprintf(s, v...))
 }
 
-func (l *logmsg) Fatalln(v ...any) string {
+func (l *logmsg) Fatal(v ...any) string {
 	return format(red, errorPrefix, fmt.Sprint(v...))
 }
 
@@ -45,7 +45,7 @@ func (l *logmsg) Fatalf(s string, v ...any) string {
 	return format(red, errorPrefix, fmt.Sprintf(s, v...))
 }
 
-func (l *logmsg) Infoln(v ...any) string {
+func (l *logmsg) Info(v ...any) string {
 	return format(blue, infoPrefix, fmt.Sprint(v...))
 }
 
@@ -53,7 +53,7 @@ func (l *logmsg) Infof(s string, v ...any) string {
 	return format(blue, infoPrefix, fmt.Sprintf(s, v...))
 }
 
-func (l *logmsg) Successln(v ...any) string {
+func (l *logmsg) Success(v ...any) string {
 	return format(green, successPrefix, fmt.Sprint(v...))
 }
 
@@ -61,7 +61,7 @@ func (l *logmsg) Successf(s string, v ...any) string {
 	return format(green, successPrefix, fmt.Sprintf(s, v...))
 }
 
-func (l *logmsg) Warnln(v ...any) string {
+func (l *logmsg) Warn(v ...any) string {
 	return format(yellow, warningPrefix, fmt.Sprint(v...))
 }
 
