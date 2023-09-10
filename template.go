@@ -3,7 +3,10 @@ package auxi
 import (
 	"fmt"
 	"net/http"
+	"reflect"
 	"strings"
+
+	"github.com/mitchellh/mapstructure"
 )
 
 type authorizationHeader struct {
@@ -64,4 +67,33 @@ func NewCORSMiddleware(options map[string]string) Middleware {
 			next.ServeHTTP(w, r)
 		})
 	}
+}
+
+func BindQueryString(r *http.Request, target any) error {
+	targetReflectValue := reflect.ValueOf(target)
+	if targetReflectValue.Kind() != reflect.Ptr && targetReflectValue.Elem().Kind() != reflect.Struct {
+		panic("Target must be a pointer to a struct")
+	}
+
+	structType := targetReflectValue.Elem().Type()
+	for i := 0; i < structType.NumField(); i++ {
+		field := structType.Field(i)
+
+		if field.Type.Kind() != reflect.String {
+			panic(
+				fmt.Sprintf(
+					"Field '%s' of target struct is not of type string",
+					field.Name))
+		}
+	}
+
+	queryString := r.URL.Query()
+
+	firstQueryString := make(map[string]string)
+
+	for key, values := range queryString {
+		firstQueryString[key] = values[0]
+	}
+
+	return mapstructure.Decode(firstQueryString, target)
 }
