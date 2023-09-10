@@ -9,15 +9,15 @@ import (
 
 var Respond respondWith
 
-type ErrorResponseData struct {
+type ErrorResponse struct {
 	ErrorData errorResponseContent `json:"error"`
 }
 
-func (e ErrorResponseData) Error() string {
+func (e ErrorResponse) Error() string {
 	return fmt.Sprint(e.ErrorData)
 }
 
-func (e *ErrorResponseData) AddValidation(validation errorResponseValidation) {
+func (e *ErrorResponse) AddValidation(validation errorResponseValidation) {
 	e.ErrorData.ValidationErrors = append(e.ErrorData.ValidationErrors,
 		validation)
 }
@@ -67,16 +67,16 @@ func (rw respondWith) JSON(w http.ResponseWriter, data any, httpStatusCode int) 
 	w.Write(response)
 }
 
-func (rw respondWith) SError(message string) ErrorResponseData {
-	return ErrorResponseData{
+func (rw respondWith) SError(message string) ErrorResponse {
+	return ErrorResponse{
 		ErrorData: errorResponseContent{
 			Message: message,
 		},
 	}
 }
 
-func (rw respondWith) SErrorFromErr(message string, err error) ErrorResponseData {
-	return ErrorResponseData{
+func (rw respondWith) SErrorFromErr(message string, err error) ErrorResponse {
+	return ErrorResponse{
 		ErrorData: errorResponseContent{
 			Message: message,
 			Details: err.Error(),
@@ -84,8 +84,8 @@ func (rw respondWith) SErrorFromErr(message string, err error) ErrorResponseData
 	}
 }
 
-func (rw respondWith) Error(code int, message string, details string, validationErrors []errorResponseValidation) ErrorResponseData {
-	return ErrorResponseData{
+func (rw respondWith) Error(code int, message string, details string, validationErrors []errorResponseValidation) ErrorResponse {
+	return ErrorResponse{
 		ErrorData: errorResponseContent{
 			strconv.Itoa(code),
 			message,
