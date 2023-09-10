@@ -10,17 +10,21 @@ import (
 )
 
 type authorizationHeader struct {
-	r *http.Request
+	header http.Header
 }
 
-func NewAuthorizationHeader(r *http.Request) authorizationHeader {
+func NewAuthorizationHeader(header http.Header) authorizationHeader {
 	return authorizationHeader{
-		r: r,
+		header: header,
 	}
 }
 
-func (ah authorizationHeader) GetBearerToken(tokenPrefix string) (string, error) {
-	value := ah.r.Header.Get("Authorization")
+func (ah authorizationHeader) GetBearerToken() (string, error) {
+	return ah.GetBearerTokenWithPrefix("Bearer")
+}
+
+func (ah authorizationHeader) GetBearerTokenWithPrefix(tokenPrefix string) (string, error) {
+	value := ah.header.Get("Authorization")
 	if value == "" {
 		err := Respond.SError("No authorization header or value given")
 		return "", err
