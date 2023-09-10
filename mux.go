@@ -14,32 +14,44 @@ type MethodHandlers struct {
 	OPTIONS func(http.ResponseWriter, *http.Request)
 }
 
-type MiddlewareChain struct {
+type Chain struct {
 	middlewares []Middleware
 }
 
-func (mc *MiddlewareChain) AddMiddleware(middleware Middleware) {
-	mc.middlewares = append(mc.middlewares, middleware)
+func NewChain(middlewares ...Middleware) *Chain {
+	return &Chain{
+		middlewares: middlewares,
+	}
 }
 
-func (mc *MiddlewareChain) Apply(handler http.HandlerFunc) http.HandlerFunc {
+func (c *Chain) AddMiddleware(middleware Middleware) {
+	c.middlewares = append(c.middlewares, middleware)
+}
+
+func (c *Chain) Apply(handler http.HandlerFunc) http.HandlerFunc {
 	resultHandler := handler
 
-	for _, middleware := range mc.middlewares {
+	for _, middleware := range c.middlewares {
 		resultHandler = middleware(resultHandler)
 	}
 
 	return resultHandler
 }
 
-func (mc *MiddlewareChain) ApplyToChain(chain MiddlewareChain) *MiddlewareChain {
-	return &MiddlewareChain{
-		middlewares: append(mc.middlewares, chain.middlewares...),
+func (c *Chain) ApplyToChain(chain Chain) *Chain {
+	return &Chain{
+		middlewares: append(c.middlewares, chain.middlewares...),
 	}
 }
 
 type ServeMux struct {
 	*http.ServeMux
+}
+
+func NewServeMux() *ServeMux {
+	return &ServeMux{
+		http.NewServeMux(),
+	}
 }
 
 func (mux *ServeMux) HandleMethods(pattern string, methodHandlers MethodHandlers) {
@@ -65,18 +77,6 @@ func (mux *ServeMux) HandleMethods(pattern string, methodHandlers MethodHandlers
 					http.StatusMethodNotAllowed)
 			}
 		}))
-}
-
-func NewMiddlewareChain(middlewares ...Middleware) *MiddlewareChain {
-	return &MiddlewareChain{
-		middlewares: middlewares,
-	}
-}
-
-func NewServeMux() *ServeMux {
-	return &ServeMux{
-		http.NewServeMux(),
-	}
 }
 
 func callMethodHandler(w http.ResponseWriter, r *http.Request, handler func(http.ResponseWriter, *http.Request)) {
