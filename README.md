@@ -52,7 +52,7 @@ func main() {
 func getHandlerForUser(w http.ResponseWriter, r *http.Request) {...}
 func postHandlerForUser(w http.ResponseWriter, r *http.Request) {...}
 
-// Declare Middlewares
+// Declare middlewares
 func AuthMiddleware(next http.HandlerFunc) http.HandlerFunc {...}
 func CORSMiddleware(next http.HandlerFunc) http.HandlerFunc {...}
 
