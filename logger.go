@@ -63,7 +63,7 @@ func (l *logger) Fatal(v ...any) {
 }
 
 func (l *logger) Fatalf(s string, v ...any) {
-	l.Fatalf(format(red, errorPrefix, fmt.Sprintf(s, v...)))
+	l.Fatalln(format(red, errorPrefix, fmt.Sprintf(s, v...)))
 }
 
 func (l *logger) Info(v ...any) {
