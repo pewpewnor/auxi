@@ -24,6 +24,7 @@ type Person struct {
 
 func TestMain(m *testing.M) {
 	Logger.SetPrefix("[TEST] ")
+	Logger.AddLineOfCodeFlag()
 
 	mux := NewServeMux()
 

@@ -40,12 +40,12 @@ func Newlogger(out io.Writer, prefix string, flag int) *logger {
 	}
 }
 
-func (l *logger) AddTimestampFlag(flag int) {
+func (l *logger) AddTimestampFlag() {
 	l.flag |= log.LstdFlags
 	l.SetFlags(l.flag)
 }
 
-func (l *logger) AddLineOfCodeFlag(flag int) {
+func (l *logger) AddLineOfCodeFlag() {
 	l.flag |= log.Llongfile
 	l.SetFlags(l.flag)
 }
