@@ -53,7 +53,7 @@ func (rw respondWith) JSON(w http.ResponseWriter, data any, httpStatusCode int) 
 		defer panic(fmt.Sprintf(
 			"Could not marshal response %v to JSON: %v", response, err))
 
-		errorResponse, err := json.Marshal(rw.SimpleErrorFromErr(
+		errorResponse, err := json.Marshal(rw.SErrorFromErr(
 			"Could not marshal response to JSON", err))
 		if err != nil {
 			w.Write([]byte("Could not marshal response to JSON"))
@@ -67,7 +67,7 @@ func (rw respondWith) JSON(w http.ResponseWriter, data any, httpStatusCode int) 
 	w.Write(response)
 }
 
-func (rw respondWith) SimpleError(message string) ErrorResponseData {
+func (rw respondWith) SError(message string) ErrorResponseData {
 	return ErrorResponseData{
 		ErrorData: errorResponseContent{
 			Message: message,
@@ -75,7 +75,7 @@ func (rw respondWith) SimpleError(message string) ErrorResponseData {
 	}
 }
 
-func (rw respondWith) SimpleErrorFromErr(message string, err error) ErrorResponseData {
+func (rw respondWith) SErrorFromErr(message string, err error) ErrorResponseData {
 	return ErrorResponseData{
 		ErrorData: errorResponseContent{
 			Message: message,
@@ -102,7 +102,7 @@ func (rw respondWith) CreateValidation(field string, message string) errorRespon
 	}
 }
 
-func (rw respondWith) SimpleSuccess(message string) SuccessResponseData {
+func (rw respondWith) SSuccess(message string) SuccessResponseData {
 	return SuccessResponseData{
 		Status:  "success",
 		Message: message,

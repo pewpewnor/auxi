@@ -19,13 +19,13 @@ func NewAuthorizationHeader(r *http.Request) authorizationHeader {
 func (ah authorizationHeader) GetBearerToken(tokenPrefix string) (string, error) {
 	value := ah.r.Header.Get("Authorization")
 	if value == "" {
-		err := Respond.SimpleError("No authorization header or value given")
+		err := Respond.SError("No authorization header or value given")
 		return "", err
 	}
 
 	values := strings.Split(value, " ")
 	if len(values) != 2 {
-		err := Respond.SimpleError("Authorization header value is malformed")
+		err := Respond.SError("Authorization header value is malformed")
 		err.AddValidation(Respond.CreateValidation(
 			"Authorization header",
 			"Expected exactly 2 values separated by spaces",
@@ -34,7 +34,7 @@ func (ah authorizationHeader) GetBearerToken(tokenPrefix string) (string, error)
 		return "", err
 	}
 	if values[0] != tokenPrefix {
-		err := Respond.SimpleError("Authorization header value is malformed")
+		err := Respond.SError("Authorization header value is malformed")
 		err.AddValidation(Respond.CreateValidation(
 			"Authorization header",
 			fmt.Sprintf("First value (token prefix) must be '%v'", tokenPrefix),
