@@ -73,7 +73,7 @@ func (mux *ServeMux) HandleMethods(pattern string, methodHandlers MethodHandlers
 			case http.MethodOptions:
 				callMethodHandler(w, r, methodHandlers.OPTIONS)
 			default:
-				http.Error(w, "Method not supported",
+				Respond.JSON(w, Respond.SError("Method not supported"),
 					http.StatusMethodNotAllowed)
 			}
 		}))
