@@ -14,7 +14,7 @@ type ErrorResponseData struct {
 }
 
 func (e ErrorResponseData) Error() string {
-	return e.ErrorData.Message
+	return fmt.Sprint(e.ErrorData)
 }
 
 func (e *ErrorResponseData) AddValidation(validation errorResponseValidation) {
@@ -95,7 +95,7 @@ func (rw respondWith) Error(code int, message string, details string, validation
 	}
 }
 
-func (rw respondWith) CreateValidation(field string, message string) errorResponseValidation {
+func (rw respondWith) NewValidation(field string, message string) errorResponseValidation {
 	return errorResponseValidation{
 		Field:   field,
 		Message: message,

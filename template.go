@@ -29,7 +29,7 @@ func (ah authorizationHeader) GetBearerToken(tokenPrefix string) (string, error)
 	values := strings.Split(value, " ")
 	if len(values) != 2 {
 		err := Respond.SError("Authorization header value is malformed")
-		err.AddValidation(Respond.CreateValidation(
+		err.AddValidation(Respond.NewValidation(
 			"Authorization header",
 			"Expected exactly 2 values separated by spaces",
 		))
@@ -38,7 +38,7 @@ func (ah authorizationHeader) GetBearerToken(tokenPrefix string) (string, error)
 	}
 	if values[0] != tokenPrefix {
 		err := Respond.SError("Authorization header value is malformed")
-		err.AddValidation(Respond.CreateValidation(
+		err.AddValidation(Respond.NewValidation(
 			"Authorization header",
 			fmt.Sprintf("First value (token prefix) must be '%v'", tokenPrefix),
 		))
@@ -77,9 +77,7 @@ func BindQueryString(r *http.Request, target any) error {
 
 	structType := targetReflectValue.Elem().Type()
 	for i := 0; i < structType.NumField(); i++ {
-		field := structType.Field(i)
-
-		if field.Type.Kind() != reflect.String {
+		if field := structType.Field(i); field.Type.Kind() != reflect.String {
 			panic(
 				fmt.Sprintf(
 					"Field '%s' of target struct is not of type string",
@@ -88,8 +86,7 @@ func BindQueryString(r *http.Request, target any) error {
 	}
 
 	queryString := r.URL.Query()
-
-	firstQueryString := make(map[string]string)
+	firstQueryString := map[string]string{}
 
 	for key, values := range queryString {
 		firstQueryString[key] = values[0]
