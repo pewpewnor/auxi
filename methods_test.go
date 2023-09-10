@@ -43,7 +43,7 @@ func TestMain(m *testing.M) {
 			}
 			params.Age = age
 
-			Respond.RespondWithJSON(w, params, http.StatusOK)
+			Respond.JSON(w, params, http.StatusOK)
 		},
 		POST: func(w http.ResponseWriter, r *http.Request) {
 			var person Person
@@ -54,7 +54,7 @@ func TestMain(m *testing.M) {
 				return
 			}
 
-			Respond.RespondWithJSON(w, person, http.StatusOK)
+			Respond.JSON(w, person, http.StatusOK)
 		},
 	})
 

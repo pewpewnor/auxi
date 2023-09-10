@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-var Respond respond
+var Respond respondWith
 
 type ErrorResponseData struct {
 	ErrorData errorResponseContent `json:"error"`
@@ -40,9 +40,9 @@ type SuccessResponseData struct {
 	Message string         `json:"message"`
 }
 
-type respond struct{}
+type respondWith struct{}
 
-func (rc respond) RespondWithJSON(w http.ResponseWriter, data any, httpStatusCode int) {
+func (rw respondWith) JSON(w http.ResponseWriter, data any, httpStatusCode int) {
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("X-Content-Type-Options", "nosniff")
 
@@ -53,7 +53,7 @@ func (rc respond) RespondWithJSON(w http.ResponseWriter, data any, httpStatusCod
 		defer panic(fmt.Sprintf(
 			"Could not marshal response %v to JSON: %v", response, err))
 
-		errorResponse, err := json.Marshal(rc.SimpleErrorFromErr(
+		errorResponse, err := json.Marshal(rw.SimpleErrorFromErr(
 			"Could not marshal response to JSON", err))
 		if err != nil {
 			w.Write([]byte("Could not marshal response to JSON"))
@@ -67,7 +67,7 @@ func (rc respond) RespondWithJSON(w http.ResponseWriter, data any, httpStatusCod
 	w.Write(response)
 }
 
-func (rc respond) SimpleError(message string) ErrorResponseData {
+func (rw respondWith) SimpleError(message string) ErrorResponseData {
 	return ErrorResponseData{
 		ErrorData: errorResponseContent{
 			Message: message,
@@ -75,7 +75,7 @@ func (rc respond) SimpleError(message string) ErrorResponseData {
 	}
 }
 
-func (rc respond) SimpleErrorFromErr(message string, err error) ErrorResponseData {
+func (rw respondWith) SimpleErrorFromErr(message string, err error) ErrorResponseData {
 	return ErrorResponseData{
 		ErrorData: errorResponseContent{
 			Message: message,
@@ -84,7 +84,7 @@ func (rc respond) SimpleErrorFromErr(message string, err error) ErrorResponseDat
 	}
 }
 
-func (rc respond) ValidationError(code int, message string, details string, validationErrors []errorResponseValidation) ErrorResponseData {
+func (rw respondWith) Error(code int, message string, details string, validationErrors []errorResponseValidation) ErrorResponseData {
 	return ErrorResponseData{
 		ErrorData: errorResponseContent{
 			strconv.Itoa(code),
@@ -95,21 +95,21 @@ func (rc respond) ValidationError(code int, message string, details string, vali
 	}
 }
 
-func (rc respond) CreateValidation(field string, message string) errorResponseValidation {
+func (rw respondWith) CreateValidation(field string, message string) errorResponseValidation {
 	return errorResponseValidation{
 		Field:   field,
 		Message: message,
 	}
 }
 
-func (rc respond) SimpleSuccess(message string) SuccessResponseData {
+func (rw respondWith) SimpleSuccess(message string) SuccessResponseData {
 	return SuccessResponseData{
 		Status:  "success",
 		Message: message,
 	}
 }
 
-func (rc respond) Success(data map[string]any, message string) SuccessResponseData {
+func (rw respondWith) Success(data map[string]any, message string) SuccessResponseData {
 	return SuccessResponseData{
 		Status:  "success",
 		Message: message,

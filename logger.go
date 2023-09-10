@@ -33,6 +33,13 @@ type logger struct {
 	flag int
 }
 
+func Newlogger(out io.Writer, prefix string, flag int) *logger {
+	return &logger{
+		log.New(out, prefix, flag),
+		flag,
+	}
+}
+
 func (l *logger) AddTimestampFlag(flag int) {
 	l.flag |= log.LstdFlags
 	l.SetFlags(l.flag)
@@ -81,13 +88,6 @@ func (l *logger) Warn(v ...any) {
 
 func (l *logger) Warnf(s string, v ...any) {
 	l.Println(format(yellow, warningPrefix, fmt.Sprintf(s, v...)))
-}
-
-func Newlogger(out io.Writer, prefix string, flag int) *logger {
-	return &logger{
-		log.New(out, prefix, flag),
-		flag,
-	}
 }
 
 func format(color func(...any) string, prefix string, message string) string {
