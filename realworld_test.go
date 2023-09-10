@@ -31,14 +31,16 @@ func TestMain(m *testing.M) {
 
 			params.Name = r.URL.Query().Get("name")
 			if params.Name == "" {
-				http.Error(w, "query string missing field 'name'",
+				Respond.JSON(w,
+					Respond.SError("query string missing field 'name'"),
 					http.StatusBadRequest)
 				return
 			}
 
 			params.Age = r.URL.Query().Get("age")
 			if params.Age == "" {
-				http.Error(w, "query string missing field 'age'",
+				Respond.JSON(w,
+					Respond.SError("query string missing field 'age'"),
 					http.StatusBadRequest)
 				return
 			}
@@ -50,7 +52,8 @@ func TestMain(m *testing.M) {
 
 			err := json.NewDecoder(r.Body).Decode(&person)
 			if err != nil {
-				http.Error(w, "body malformed", http.StatusBadRequest)
+				Respond.JSON(w, Respond.SErrorFromErr("body malformed", err),
+					http.StatusBadRequest)
 				return
 			}
 
@@ -74,7 +77,6 @@ func TestMain(m *testing.M) {
 				Respond.JSON(w,
 					Respond.SErrorFromErr("Query string malformed", err),
 					http.StatusBadRequest)
-				fmt.Println(err)
 				return
 			}
 
@@ -107,7 +109,7 @@ func TestGetHandlerAndQueryString(t *testing.T) {
 	var person Person
 	err = json.NewDecoder(resp.Body).Decode(&person)
 	if err != nil {
-		t.Errorf("but instead got: %v", err)
+		t.Errorf("Respond body malformed: %v", err)
 	}
 
 	if person.Name != expectedPerson.Name || person.Age != expectedPerson.Age {
@@ -119,7 +121,7 @@ func TestGetHandlerAndQueryString(t *testing.T) {
 func TestPostHandler(t *testing.T) {
 	requestBody, err := json.Marshal(expectedPerson)
 	if err != nil {
-		t.Fatalf("Failed to encode person to JSON: %v", err)
+		t.Fatalf("Failed to encode request to JSON: %v", err)
 	}
 
 	resp, err := http.Post(
@@ -164,8 +166,8 @@ func TestPutHandlerAndAuthHeaderGrabber(t *testing.T) {
 	defer resp.Body.Close()
 
 	if expectedStatusCode := http.StatusOK; resp.StatusCode != expectedStatusCode {
-		t.Errorf("Expected status code %v, but instead got %v", expectedStatusCode,
-			resp.StatusCode)
+		t.Errorf("Expected status code %v, but instead got %v",
+			expectedStatusCode, resp.StatusCode)
 	}
 
 	var apiKey string
@@ -175,7 +177,8 @@ func TestPutHandlerAndAuthHeaderGrabber(t *testing.T) {
 	}
 
 	if apiKey != expectedApiKey {
-		t.Errorf("Expected response %v, but instead got %v", expectedApiKey, apiKey)
+		t.Errorf("Expected response %v, but instead got %v", expectedApiKey,
+			apiKey)
 	}
 }
 
