@@ -65,8 +65,10 @@ func main() {
 	v1 := auxi.NewServeMux() // Create a new router called v1
 
 	v1.HandleMethods("/user", auxi.MethodHandlers{
-		GET: group.Apply(getHandlerForUser), // Applies middleware chain 'group' to the GET handler
-		POST: CORSMiddleware(postHandlerForUser), // POST handler only uses CORS middleware
+		// Applies middleware chain 'group' to the GET handler
+		GET: group.Apply(getHandlerForUser),
+		// POST handler only uses CORS middleware
+		POST: CORSMiddleware(postHandlerForUser),
 	})
 
 	mux.Handle("/v1/", http.StripPrefix("/v1", v1))
