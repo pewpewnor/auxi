@@ -85,5 +85,5 @@ func callMethodHandler(w http.ResponseWriter, r *http.Request, handler func(http
 		return
 	}
 
-	handler(w, r)
+	http.HandlerFunc(handler).ServeHTTP(w, r)
 }
