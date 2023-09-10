@@ -4,7 +4,7 @@ GO (Golang) library for HTTP method-specific handler, middleware group chaining,
 ## Features
 
 This library is a minimal abstraction on top of vanilla libraries to include features such as:
-- HTTP method-specific handler (GET, POST, PUT, DELETE, OPTIONS, etc)
+- HTTP method-specific handler (GET, POST, PUT, DELETE, PATCH, HEAD, OPTIONS)
 - Middleware chain group creator to apply multiple middlewares to any handler
 - Colored log message generator,
 - Complete JSON response function and JSON HTTP response generator
