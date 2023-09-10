@@ -1,6 +1,8 @@
 # auxi
 GO (Golang) library for HTTP method-specific handler, middleware group chaining, colored log message, better HTTP response generator, and handler utils
 
+## Features
+
 This library is a minimal abstraction on top of vanilla libraries to include features such as:
 - HTTP method-specific handler (GET, POST, PUT, DELETE, OPTIONS, etc)
 - Middleware chain group creator to apply multiple middlewares to any handler
