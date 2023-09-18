@@ -14,21 +14,21 @@ type MethodHandlers struct {
 	OPTIONS func(http.ResponseWriter, *http.Request)
 }
 
-type Chain struct {
+type MiddlewareChain struct {
 	middlewares []Middleware
 }
 
-func NewChain(middlewares ...Middleware) *Chain {
-	return &Chain{
+func NewMiddlewareChain(middlewares ...Middleware) *MiddlewareChain {
+	return &MiddlewareChain{
 		middlewares: middlewares,
 	}
 }
 
-func (c *Chain) AddMiddleware(middleware Middleware) {
+func (c *MiddlewareChain) AddMiddleware(middleware Middleware) {
 	c.middlewares = append(c.middlewares, middleware)
 }
 
-func (c *Chain) Apply(handler http.HandlerFunc) http.HandlerFunc {
+func (c *MiddlewareChain) Apply(handler http.HandlerFunc) http.HandlerFunc {
 	resultHandler := handler
 
 	for _, middleware := range c.middlewares {
@@ -38,8 +38,8 @@ func (c *Chain) Apply(handler http.HandlerFunc) http.HandlerFunc {
 	return resultHandler
 }
 
-func (c *Chain) ApplyToChain(chain Chain) *Chain {
-	return &Chain{
+func (c *MiddlewareChain) ApplyToChain(chain MiddlewareChain) *MiddlewareChain {
+	return &MiddlewareChain{
 		middlewares: append(c.middlewares, chain.middlewares...),
 	}
 }
