@@ -9,6 +9,10 @@ import (
 	"net/http/httptest"
 	"net/url"
 	"testing"
+
+	"github.com/pewpewnor/auxi/logmsg"
+	"github.com/pewpewnor/auxi/respond"
+	"github.com/pewpewnor/auxi/utils"
 )
 
 var testServer *httptest.Server
@@ -35,61 +39,61 @@ func TestMain(m *testing.M) {
 
 			params.Name = r.URL.Query().Get("name")
 			if params.Name == "" {
-				log.Println(Logmsg.Err("query string missing field 'name'"))
-				Respond.JSON(w,
-					Respond.SError("query string missing field 'name'"),
+				log.Println(logmsg.Err("query string missing field 'name'"))
+				respond.JSON(w,
+					respond.SError("query string missing field 'name'"),
 					http.StatusBadRequest)
 				return
 			}
 
 			params.Age = r.URL.Query().Get("age")
 			if params.Age == "" {
-				log.Println(Logmsg.Err("query string missing field 'age'"))
-				Respond.JSON(w,
-					Respond.SError("query string missing field 'age'"),
+				log.Println(logmsg.Err("query string missing field 'age'"))
+				respond.JSON(w,
+					respond.SError("query string missing field 'age'"),
 					http.StatusBadRequest)
 				return
 			}
 
-			Respond.JSON(w, params, http.StatusOK)
+			respond.JSON(w, params, http.StatusOK)
 		},
 		POST: func(w http.ResponseWriter, r *http.Request) {
 			var person Person
 
 			err := json.NewDecoder(r.Body).Decode(&person)
 			if err != nil {
-				log.Println(Logmsg.Err(err))
-				Respond.JSON(w, Respond.SErrorFromErr("body malformed", err),
+				log.Println(logmsg.Err(err))
+				respond.JSON(w, respond.SErrorFromErr("body malformed", err),
 					http.StatusBadRequest)
 				return
 			}
 
-			Respond.JSON(w, person, http.StatusOK)
+			respond.JSON(w, person, http.StatusOK)
 		},
 		PUT: func(w http.ResponseWriter, r *http.Request) {
-			apiKey, err := NewAuthorizationHeader(r.Header).GetBearerToken()
+			apiKey, err := utils.NewAuthorizationHeader(r.Header).GetBearerToken()
 			if err != nil {
-				log.Println(Logmsg.Err(err))
-				Respond.JSON(w,
-					Respond.SErrorFromErr("Auth header malformed", err),
+				log.Println(logmsg.Err(err))
+				respond.JSON(w,
+					respond.SErrorFromErr("Auth header malformed", err),
 					http.StatusBadRequest)
 				return
 			}
 
-			Respond.JSON(w, apiKey, http.StatusOK)
+			respond.JSON(w, apiKey, http.StatusOK)
 		},
 		DELETE: func(w http.ResponseWriter, r *http.Request) {
 			var person Person
 
-			if err := BindQueryString(r, &person); err != nil {
-				log.Println(Logmsg.Err(err))
-				Respond.JSON(w,
-					Respond.SErrorFromErr("Query string malformed", err),
+			if err := utils.BindQueryString(r, &person); err != nil {
+				log.Println(logmsg.Err(err))
+				respond.JSON(w,
+					respond.SErrorFromErr("Query string malformed", err),
 					http.StatusBadRequest)
 				return
 			}
 
-			Respond.JSON(w, person, http.StatusOK)
+			respond.JSON(w, person, http.StatusOK)
 		},
 	})
 

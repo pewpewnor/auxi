@@ -2,6 +2,8 @@ package auxi
 
 import (
 	"net/http"
+
+	"github.com/pewpewnor/auxi/respond"
 )
 
 type Middleware func(next http.HandlerFunc) http.HandlerFunc
@@ -55,7 +57,7 @@ func (mux *ServeMux) HandleMethods(pattern string, methodHandlers MethodHandlers
 			case http.MethodOptions:
 				callMethodHandler(w, r, methodHandlers.OPTIONS)
 			default:
-				Respond.JSON(w, Respond.SError("Method not supported"),
+				respond.JSON(w, respond.SError("Method not supported"),
 					http.StatusMethodNotAllowed)
 			}
 		}))

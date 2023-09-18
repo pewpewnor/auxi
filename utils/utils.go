@@ -1,4 +1,4 @@
-package auxi
+package utils
 
 import (
 	"fmt"
@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/mitchellh/mapstructure"
+	"github.com/pewpewnor/auxi/respond"
 )
 
 type authorizationHeader struct {
@@ -26,14 +27,14 @@ func (ah authorizationHeader) GetBearerToken() (string, error) {
 func (ah authorizationHeader) GetBearerTokenWithPrefix(tokenPrefix string) (string, error) {
 	value := ah.header.Get("Authorization")
 	if value == "" {
-		err := Respond.SError("No authorization header or value given")
+		err := respond.SError("No authorization header or value given")
 		return "", err
 	}
 
 	values := strings.Split(value, " ")
 	if len(values) != 2 {
-		err := Respond.SError("Authorization header value is malformed")
-		err.AddValidation(Respond.NewValidation(
+		err := respond.SError("Authorization header value is malformed")
+		err.AddValidation(respond.NewValidation(
 			"Authorization header",
 			"Expected exactly 2 values separated by spaces",
 		))
@@ -41,8 +42,8 @@ func (ah authorizationHeader) GetBearerTokenWithPrefix(tokenPrefix string) (stri
 		return "", err
 	}
 	if values[0] != tokenPrefix {
-		err := Respond.SError("Authorization header value is malformed")
-		err.AddValidation(Respond.NewValidation(
+		err := respond.SError("Authorization header value is malformed")
+		err.AddValidation(respond.NewValidation(
 			"Authorization header",
 			fmt.Sprintf("First value (token prefix) must be '%v'", tokenPrefix),
 		))
@@ -53,7 +54,7 @@ func (ah authorizationHeader) GetBearerTokenWithPrefix(tokenPrefix string) (stri
 	return values[1], nil
 }
 
-func NewCORSMiddleware(options map[string]string) Middleware {
+func NewCORSMiddleware(options map[string]string) func(next http.HandlerFunc) http.HandlerFunc {
 	return func(next http.HandlerFunc) http.HandlerFunc {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			r.Header.Set("Access-Control-Allow-Origin", "*")
