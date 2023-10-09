@@ -12,7 +12,14 @@ This library is a minimal abstraction on top of vanilla libraries to include fea
 - Bind function to bind Query String from URL to a struct
 - Template CORS middleware
 
-## Examples
+## Usage
+
+To use this library, we first need to add to our project's dependency:
+```bash
+go get github.com/pewpewnor/auxi
+```
+
+## Usage Examples
 
 - HTTP method-specific handler example:
 
